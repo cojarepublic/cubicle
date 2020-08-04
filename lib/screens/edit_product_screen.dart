@@ -1,6 +1,8 @@
 import 'package:cubicle/providers/product.dart';
+import 'package:cubicle/providers/products.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
@@ -16,7 +18,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
   var _editedProduct =
-      Product(id: null, price: 0, title: '', description: '', imageUrl: '');
+  Product(id: null,
+      price: 0,
+      title: '',
+      description: '',
+      imageUrl: '');
 
   @override
   void initState() {
@@ -36,9 +42,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
-      setState(() {});
+//      if (!_imageUrlController.text.startsWith('http') &&
+//    !_imageUrlController.text.startsWith('https') ||
+//          (!_imageUrlController.text.endsWith('.png') &&
+//    !_imageUrlController.text.endsWith('.jpg') &&
+//    !_imageUrlController.text.endsWith('.jpeg'))) {
+//    return;
+//    }
+    setState(() {});
     }
-
   }
 
 
@@ -48,10 +60,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
       return;
     }
     _form.currentState.save();
-    print(_editedProduct.title);
-    print(_editedProduct.price);
-    print(_editedProduct.description);
-    print(_editedProduct.imageUrl);
+    Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+    Navigator.of(context).pop();
   }
 
   @override
@@ -80,7 +90,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
                 validator: (value) {
                   if (value.isEmpty) {
-                    return 'Please enter a Title';
+                    return 'Please enter a title.';
                   }
                   return null;
                 },
@@ -100,6 +110,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_descriptionFocusNode);
                 },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a price.';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter a valid number.';
+                  }
+                  if (double.parse(value) <= 0) {
+                    return 'Please enter a value greater than zero.';
+                  }
+                  return null;
+                },
                 onSaved: (value) {
                   _editedProduct = Product(
                       title: _editedProduct.title,
@@ -115,6 +137,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.multiline,
                 focusNode: _descriptionFocusNode,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter a description.';
+                  }
+                  return null;
+                },
                 onSaved: (value) {
                   _editedProduct = Product(
                       title: _editedProduct.title,
@@ -140,11 +168,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     child: _imageUrlController.text.isEmpty
                         ? Text('Enter a URL')
                         : FittedBox(
-                            child: Image.network(
-                              _imageUrlController.text,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                      child: Image.network(
+                        _imageUrlController.text,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                   Expanded(
                     child: TextFormField(
@@ -156,6 +184,22 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       onFieldSubmitted: (_) {
                         _saveForm();
                       },
+//                      validator: (value) {
+//                        if (value.isEmpty) {
+//                          return 'Please enter an image URL.';
+//                        }
+//                        if (!value.startsWith('http')
+//                        &&
+//                        !value.startsWith('https')) {
+//                        return 'Please enter a valid URL.';
+//                        }
+//                        if (!value.endsWith('.png') && !value.endsWith('.jpg') &&
+//                        !value.endsWith('.jpeg')) {
+//                        return 'Please enter a valid image URL.';
+//                        }
+//                        return
+//                        null;
+//                      },
                       onSaved: (value) {
                         _editedProduct = Product(
                             title: _editedProduct.title,
