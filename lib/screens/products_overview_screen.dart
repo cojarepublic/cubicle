@@ -1,4 +1,5 @@
 import 'package:cubicle/providers/cart.dart';
+import 'package:cubicle/providers/products.dart';
 import 'package:cubicle/widgets/app_drawer.dart';
 import 'package:cubicle/widgets/badge.dart';
 import 'package:cubicle/widgets/products_grid.dart';
@@ -19,6 +20,25 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _showOnlyFavorites = false;
+  var _isInit = true;
+
+
+//  @override
+//  void initState() {
+//    Provider.of<Products>(context).fetchAndSetProducts();
+//    Future.delayed(Duration.zero)
+//        .then((value) => Provider.of<Products>(context).fetchAndSetProducts());
+//    super.initState();
+//  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      Provider.of<Products>(context).fetchAndSetProducts();
+    }
+    _isInit = false;
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
