@@ -1,4 +1,3 @@
-
 import 'package:cubicle/models/http_exception.dart';
 import 'package:cubicle/providers/product.dart';
 import 'package:flutter/material.dart';
@@ -58,21 +57,23 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  Future<void> fetchAndSetProducts () async {
+  Future<void> fetchAndSetProducts() async {
     const url = 'https://cubicle-9215d.firebaseio.com/products.json';
     try {
       final response = await http.get(url);
-      final extractedData = json.decode(response.body)as Map<String, dynamic>;
-      final List<Product>loadedProducts = [];
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      if (extractedData == null) {
+        return;
+      }
+      final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
-          id: prodId,
-          title: prodData['title'],
-          description: prodData['description'],
-          price: prodData['price'],
-          imageUrl: prodData['imageUrl'],
-          isFavorite: prodData['isFavorite']
-        ));
+            id: prodId,
+            title: prodData['title'],
+            description: prodData['description'],
+            price: prodData['price'],
+            imageUrl: prodData['imageUrl'],
+            isFavorite: prodData['isFavorite']));
       });
       _items = loadedProducts;
       notifyListeners();
@@ -84,8 +85,7 @@ class Products with ChangeNotifier {
   Future<void> addProduct(Product product) async {
     const url = 'https://cubicle-9215d.firebaseio.com/products.json';
     try {
-      final response = await http
-          .post(url,
+      final response = await http.post(url,
           body: json.encode({
             'title': product.title,
             'description': product.description,
@@ -106,20 +106,19 @@ class Products with ChangeNotifier {
     } catch (error) {
       throw error;
     }
-
-
   }
 
   Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       final url = 'https://cubicle-9215d.firebaseio.com/products/$id.json';
-      await http.patch(url, body: json.encode({
-        'title': newProduct.title,
-        'description': newProduct.description,
-        'imageUrl': newProduct.imageUrl,
-        'price': newProduct.price,
-      }));
+      await http.patch(url,
+          body: json.encode({
+            'title': newProduct.title,
+            'description': newProduct.description,
+            'imageUrl': newProduct.imageUrl,
+            'price': newProduct.price,
+          }));
       _items[prodIndex] = newProduct;
       notifyListeners();
     } else {
@@ -134,19 +133,18 @@ class Products with ChangeNotifier {
     _items.removeAt(existingProductIndex);
     notifyListeners();
 
-   final response = await http.delete(url);
-   if (response.statusCode >= 400) {
-     _items.insert(existingProductIndex, existingProduct);
-     notifyListeners();
-     throw HttpException('Could not delete product.');
-   }
-     existingProduct = null;
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
+      _items.insert(existingProductIndex, existingProduct);
+      notifyListeners();
+      throw HttpException('Could not delete product.');
+    }
+    existingProduct = null;
   }
 //  _items.removeWhere((prod) => prod.id == id);
 //  notifyListeners();
 
 }
-
 
 //  void showFavoritesOnly () {
 //    _showFavoritesOnly = true;
@@ -157,5 +155,3 @@ class Products with ChangeNotifier {
 //    _showFavoritesOnly = false;
 //    notifyListeners();
 //  }
-
-
