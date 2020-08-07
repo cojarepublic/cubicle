@@ -1,4 +1,5 @@
 
+import 'package:cubicle/models/http_exception.dart';
 import 'package:cubicle/providers/product.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -126,10 +127,26 @@ class Products with ChangeNotifier {
     }
   }
 
-  void deleteProduct(String id) {
-    _items.removeWhere((prod) => prod.id == id);
+  Future<void> deleteProduct(String id) async {
+    final url = 'https://cubicle-9215d.firebaseio.com/products/$id.json';
+    final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
+    var existingProduct = _items[existingProductIndex];
+    _items.removeAt(existingProductIndex);
     notifyListeners();
+
+   final response = await http.delete(url);
+   if (response.statusCode >= 400) {
+     _items.insert(existingProductIndex, existingProduct);
+     notifyListeners();
+     throw HttpException('Could not delete product.');
+   }
+     existingProduct = null;
   }
+//  _items.removeWhere((prod) => prod.id == id);
+//  notifyListeners();
+
+}
+
 
 //  void showFavoritesOnly () {
 //    _showFavoritesOnly = true;
@@ -141,4 +158,4 @@ class Products with ChangeNotifier {
 //    notifyListeners();
 //  }
 
-}
+
