@@ -1,3 +1,4 @@
+import 'package:cubicle/providers/auth.dart';
 import 'package:cubicle/providers/cart.dart';
 import 'package:cubicle/screens/auth_screen.dart';
 import 'package:cubicle/screens/cart_screen.dart';
@@ -22,6 +23,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          builder: (ctx) => Auth(),
+        ),
         ChangeNotifierProvider(
           builder: (ctx) => Products(),
         ),
