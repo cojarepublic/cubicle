@@ -22,35 +22,36 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          builder: (ctx) => Auth(),
-        ),
-        ChangeNotifierProvider(
-          builder: (ctx) => Products(),
-        ),
-        ChangeNotifierProvider(
-          builder: (ctx) => Cart(),
-        ),
-        ChangeNotifierProvider(
-          builder: (ctx) => Orders(),
-        ),
-      ],
-      child: MaterialApp(
-        title: 'Cubicle',
-        theme: ThemeData(
-            primarySwatch: Colors.orange,
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-            fontFamily: 'Righteous'),
-        home: AuthScreen(),
-        routes: {
-          ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
-          CartScreen.routeName: (ctx) => CartScreen(),
-          OrdersScreen.routeName: (ctx) => OrdersScreen(),
-          UserProductsScreen.routeName: (ctx) => UserProductsScreen(),
-          EditProductScreen.routeName: (ctx) => EditProductScreen(),
-        },
-      ),
-    );
+        providers: [
+          ChangeNotifierProvider(
+            builder: (ctx) => Auth(),
+          ),
+          ChangeNotifierProvider(
+            builder: (ctx) => Products(),
+          ),
+          ChangeNotifierProvider(
+            builder: (ctx) => Cart(),
+          ),
+          ChangeNotifierProvider(
+            builder: (ctx) => Orders(),
+          ),
+        ],
+        child: Consumer<Auth>(
+          builder: (ctx, auth, _) => MaterialApp(
+            title: 'Cubicle',
+            theme: ThemeData(
+                primarySwatch: Colors.orange,
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+                fontFamily: 'Righteous'),
+            home: auth.isAuth ? ProductsOverviewScreen() : AuthScreen(),
+            routes: {
+              ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+              CartScreen.routeName: (ctx) => CartScreen(),
+              OrdersScreen.routeName: (ctx) => OrdersScreen(),
+              UserProductsScreen.routeName: (ctx) => UserProductsScreen(),
+              EditProductScreen.routeName: (ctx) => EditProductScreen(),
+            },
+          ),
+        ));
   }
 }
