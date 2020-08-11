@@ -1,4 +1,5 @@
 import 'package:cubicle/providers/cart.dart';
+import 'package:cubicle/screens/auth_screen.dart';
 import 'package:cubicle/screens/cart_screen.dart';
 import 'package:cubicle/screens/edit_product_screen.dart';
 import 'package:cubicle/screens/user_products_screen.dart';
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.orange,
             visualDensity: VisualDensity.adaptivePlatformDensity,
             fontFamily: 'Righteous'),
-        home: ProductsOverviewScreen(),
+        home: AuthScreen(),
         routes: {
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
           CartScreen.routeName: (ctx) => CartScreen(),
