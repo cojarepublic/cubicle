@@ -41,6 +41,9 @@ class Products with ChangeNotifier {
   ];
 
 //  var _showFavoritesOnly = false;
+  final String authToken;
+
+  Products(this.authToken, this._items);
 
   List<Product> get items {
 //    if (_showFavoritesOnly) {
@@ -83,7 +86,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    const url = 'https://cubicle-9215d.firebaseio.com/products.json';
+    final url = 'https://cubicle-9215d.firebaseio.com/products.json?=$authToken';
     try {
       final response = await http.post(url,
           body: json.encode({
