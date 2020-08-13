@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:cubicle/providers/products.dart';
 import 'package:cubicle/screens/product_detail_screen.dart';
 import 'package:cubicle/screens/products_overview_screen.dart';
+import 'package:cubicle/screens/splash_screen.dart';
 
 import 'providers/orders.dart';
 import 'screens/orders_screen.dart';
@@ -27,13 +28,19 @@ class MyApp extends StatelessWidget {
             builder: (ctx) => Auth(),
           ),
           ChangeNotifierProxyProvider<Auth, Products>(
-            builder: (ctx, auth, previousProducts) => Products(auth.token, auth.userId, previousProducts == null ? [] : previousProducts.items),
+            builder: (ctx, auth, previousProducts) => Products(
+                auth.token,
+                auth.userId,
+                previousProducts == null ? [] : previousProducts.items),
           ),
           ChangeNotifierProvider(
             builder: (ctx) => Cart(),
           ),
           ChangeNotifierProxyProvider<Auth, Orders>(
-            builder: (ctx, auth, previousOrders) => Orders(auth.token, auth.userId, previousOrders == null ? [] : previousOrders.orders),
+            builder: (ctx, auth, previousOrders) => Orders(
+                auth.token,
+                auth.userId,
+                previousOrders == null ? [] : previousOrders.orders),
           ),
         ],
         child: Consumer<Auth>(
@@ -43,7 +50,16 @@ class MyApp extends StatelessWidget {
                 primarySwatch: Colors.orange,
                 visualDensity: VisualDensity.adaptivePlatformDensity,
                 fontFamily: 'Righteous'),
-            home: auth.isAuth ? ProductsOverviewScreen() : AuthScreen(),
+            home: auth.isAuth
+                ? ProductsOverviewScreen()
+                : FutureBuilder(
+                    future: auth.tryAutoLogin(),
+                    builder: (ctx, authResultSnapshot) =>
+                        authResultSnapshot.connectionState ==
+                                ConnectionState.waiting
+                            ? SplashScreen()
+                            : AuthScreen(),
+                  ),
             routes: {
               ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
               CartScreen.routeName: (ctx) => CartScreen(),
