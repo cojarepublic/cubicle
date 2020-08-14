@@ -1,3 +1,4 @@
+import 'package:cubicle/helpers/custom_route.dart';
 import 'package:cubicle/providers/auth.dart';
 import 'package:cubicle/providers/cart.dart';
 import 'package:cubicle/screens/auth_screen.dart';
@@ -49,7 +50,11 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
                 primarySwatch: Colors.orange,
                 visualDensity: VisualDensity.adaptivePlatformDensity,
-                fontFamily: 'Righteous'),
+                fontFamily: 'Righteous',
+            pageTransitionsTheme: PageTransitionsTheme(builders: {
+              TargetPlatform.android: CustomPageTransitionBuilder(),
+              TargetPlatform.iOS: CustomPageTransitionBuilder(),
+            })),
             home: auth.isAuth
                 ? ProductsOverviewScreen()
                 : FutureBuilder(

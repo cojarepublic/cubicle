@@ -1,3 +1,4 @@
+import 'package:cubicle/helpers/custom_route.dart';
 import 'package:cubicle/screens/orders_screen.dart';
 import 'package:cubicle/screens/user_products_screen.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class AppDrawer extends StatelessWidget {
             title: Text('Orders'),
             onTap: () {
               Navigator.of(context).pushReplacementNamed(OrdersScreen.routeName);
+//            Navigator.of(context).pushReplacement(CustomRoute(builder: (ctx) => OrdersScreen()));
             },
           ),
           Divider(),
